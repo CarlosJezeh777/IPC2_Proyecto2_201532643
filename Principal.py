@@ -5,12 +5,15 @@ def mensaje():
 
 ventana = Tk()
 ventana.geometry("600x400") 
-ventana.title("Ventana Hola mundo")
+ventana.title("PRINCIPAL")
 
 lbl = Label(ventana, text = "este es un label de tkinter")
 lbl.pack()
 
-btn = Button(ventana, text = "presiona este boton para mensaje", command = mensaje)
+btn = Button(ventana, text = "BUSCAR", command = mensaje)
 btn.pack()
-
+btn1 = Button(ventana, text = "HOLA", command = mensaje)
+btn1.pack()
+btn2 = Button(ventana, text = "JAJA", command = mensaje)
+btn2.pack()
 ventana.mainloop()
