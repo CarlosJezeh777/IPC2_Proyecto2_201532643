@@ -15,3 +15,12 @@ class Nodo_simple:
 
     def setObjeto(self,siguiente):
         self.siguiente = siguiente
+
+class Nodo_xml:
+    
+    def __init__(self, nombre, filas, columnas, imagen):
+        self.nombre = nombre
+        self.filas = filas
+        self.columnas = columnas
+        self.imagen = imagen
+        self.siguiente = None

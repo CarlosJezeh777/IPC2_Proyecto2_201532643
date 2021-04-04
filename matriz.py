@@ -1,6 +1,7 @@
 from Nodos import Nodo, nodoEncabezado
 from encabezado import listaEncabezado
 
+
 class matriz:
     def __init__(self):
          self.eFilas = listaEncabezado()
@@ -62,28 +63,53 @@ class matriz:
 
     def imprimirColumna(self):
         eColum = self.eColumnas.primero
-
         while eColum != None:
-
             actual = eColum.acceso
             print("\ncolumna " + str(actual.columna))
             print("fila valor")
             while actual != None:
                 print(str(actual.fila)+"   "+actual.dato)  
                 actual = actual.abajo
-
             eColum = eColum.siguiente      
 
+    def grafica_original(self):
+        cadena = """digraph matriz{
+        node[shape = record];
+        structura [label = \""""
 
-m = matriz()
+        eColum = self.eColumnas.primero
+        while eColum != None:
+            actual = eColum.acceso
+            cadena = cadena + "{" + str(actual.columna) 
+            while actual != None:  
+                if actual.dato == "*":
+                    cadena = cadena + "|" + str(actual.dato)
+                else:
+                    cadena = cadena + "|"
+                actual = actual.abajo
+            eColum = eColum.siguiente
+            
+            if eColum == None:
+                cadena =  cadena + "}"     
+            else:     
+                cadena =  cadena + "}|"
 
-m.insertar(1,1,"hola")
-m.insertar(1,2,"h")
-m.insertar(4,3,"hol")
-m.insertar(4,4,"ola")
-m.insertar(5,1,"la")
-m.insertar(6,1,"a")
-m.insertar(6,2,"o")
-m.insertar(2,1,"l")
+        cadena = cadena +"""\"];
+        }"""
+        return cadena
 
-m.imprimirColumna()
+# m = matriz()
+
+# m.insertar(1,1,"-")
+# m.insertar(1,2,"-")
+# m.insertar(1,3,"*")
+# m.insertar(2,1,"*")
+# m.insertar(2,2,"-")
+# m.insertar(2,3,"*")
+# m.insertar(3,1,"-")
+# m.insertar(3,2,"*")
+# m.insertar(3,3,"-")
+
+# m.imprimirColumna()
+# a = m.grafica_original()
+# print(a)
