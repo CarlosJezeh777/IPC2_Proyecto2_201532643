@@ -1,11 +1,20 @@
 from tkinter import *
 from tkinter import filedialog
+import xml.etree.ElementTree as ET
+
 
 def ventanaCargar():
-    archivo_entrada = filedialog.askopenfilename(initialdir = "/",title = "Selecciona un archivo",filetypes =(("lfp files","*.xml"),("lfp files","*.*")))
-    archivo1 = open(archivo_entrada, "r")
-    texto1 = archivo1.read()
-    print(texto1)
+    archivo_entrada = filedialog.askopenfilename(initialdir = "C:/Users/jezeh/OneDrive/Escritorio/IPC2/Proyecto2_ipc2",title = "Selecciona un archivo",filetypes =(("xml files","*.xml"),("xml files","*.*")))
+    print(archivo_entrada)
+
+    archivo = ET.parse(archivo_entrada)
+    root = archivo.getroot()
+
+    for element in root:
+        print(element)
+        for subelement in element:
+            print(subelement.text)
+    
 
 def ventanaOperaciones():
     ventana_ope = Toplevel()
