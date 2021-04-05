@@ -110,13 +110,13 @@ class matriz:
                     actual = actual.abajo
             eColum = eColum.siguiente
 
-    def linea_horizontal(self, c, f1, f2):
+    def linea_horizontal(self, f, c1, c2):
         eFila = self.eFilas.primero
         while eFila != None:
             actual = eFila.acceso
-            if actual.fila == c:
+            if actual.fila == f:
                 while actual != None:
-                    if actual.columna >= f1 and actual.columna <= f2  :
+                    if actual.columna >= c1 and actual.columna <= c2  :
                         actual.dato = "*"
                     
                     actual = actual.derecha
@@ -131,8 +131,7 @@ class matriz:
             if actual.columna >= y and actual.columna < finaly:
                 while actual != None:
                     if actual.fila >= x and actual.fila < finalx  :
-                        actual.dato = "*"
-                    
+                        actual.dato = "*"    
                     actual = actual.abajo
             eColum = eColum.siguiente
 
@@ -150,17 +149,16 @@ class matriz:
 
     def agregar_triangulo(self,x,y,t):
         finalx = x + t
-        finaly = y + t 
+        finaly = y + t
         eColum = self.eColumnas.primero
         while eColum != None:
             actual = eColum.acceso
             if actual.columna >= y and actual.columna < finaly:
                 while actual != None:
                     if actual.fila >= x and actual.fila < finalx  :
-                        actual.dato = "-"
-                    
+                        actual.dato = "*"
                     actual = actual.abajo
-            x = x + 1
+                x = x +1
             eColum = eColum.siguiente
         
 
@@ -168,25 +166,24 @@ class matriz:
 
 # m = matriz()
 
-# m.insertar(1,1,"*")
-# m.insertar(1,2,"*")
-# m.insertar(1,3,"*")
-# m.insertar(1,4,"*")
-# m.insertar(2,1,"*")
-# m.insertar(2,2,"*")
-# m.insertar(2,3,"*")
-# m.insertar(2,4,"*")
-# m.insertar(3,1,"*")
-# m.insertar(3,2,"*")
-# m.insertar(3,3,"*")
-# m.insertar(3,4,"*")
-# m.insertar(4,1,"*")
-# m.insertar(4,2,"*")
-# m.insertar(4,3,"*")
-# m.insertar(4,4,"*")
+# m.insertar(1,1,"-")
+# m.insertar(1,2,"-")
+# m.insertar(1,3,"-")
+# m.insertar(1,4,"-")
+# m.insertar(2,1,"-")
+# m.insertar(2,2,"-")
+# m.insertar(2,3,"-")
+# m.insertar(2,4,"-")
+# m.insertar(3,1,"-")
+# m.insertar(3,2,"-")
+# m.insertar(3,3,"-")
+# m.insertar(3,4,"-")
+# m.insertar(4,1,"-")
+# m.insertar(4,2,"-")
+# m.insertar(4,3,"-")
+# m.insertar(4,4,"-")
 
-# m.imprimirColumna()
-# m.agregar_triangulo(1,2,3)
+# m.agregar_triangulo(1,1,3)
 # a = m.cadena_grap()
 # print(a)
 

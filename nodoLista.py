@@ -24,3 +24,4 @@ class Nodo_xml:
         self.columnas = columnas
         self.imagen = imagen
         self.siguiente = None
+
