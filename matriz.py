@@ -72,7 +72,7 @@ class matriz:
                 actual = actual.abajo
             eColum = eColum.siguiente      
 
-    def grafica_original(self):
+    def cadena_grap(self):
         cadena = """digraph matriz{
         node[shape = record];
         structura [label = \""""
@@ -98,18 +98,95 @@ class matriz:
         }"""
         return cadena
 
+    def linea_vertical(self, c, f1, f2):
+        eColum = self.eColumnas.primero
+        while eColum != None:
+            actual = eColum.acceso
+            if actual.columna == c:
+                while actual != None:
+                    if actual.fila >= f1 and actual.fila <= f2  :
+                        actual.dato = "*"
+                    
+                    actual = actual.abajo
+            eColum = eColum.siguiente
+
+    def linea_horizontal(self, c, f1, f2):
+        eFila = self.eFilas.primero
+        while eFila != None:
+            actual = eFila.acceso
+            if actual.fila == c:
+                while actual != None:
+                    if actual.columna >= f1 and actual.columna <= f2  :
+                        actual.dato = "*"
+                    
+                    actual = actual.derecha
+            eFila = eFila.siguiente
+    
+    def agregar_rectangulo(self, x,y,f,c):
+        finalx = x + f 
+        finaly = y + c
+        eColum = self.eColumnas.primero
+        while eColum != None:
+            actual = eColum.acceso
+            if actual.columna >= y and actual.columna < finaly:
+                while actual != None:
+                    if actual.fila >= x and actual.fila < finalx  :
+                        actual.dato = "*"
+                    
+                    actual = actual.abajo
+            eColum = eColum.siguiente
+
+    def limpiar_espacio(self,f1,c1,f2,c2):
+        eColum = self.eColumnas.primero
+        while eColum != None:
+            actual = eColum.acceso
+            if actual.columna >= c1 and actual.columna <= c2:
+                while actual != None:
+                    if actual.fila >= f1 and actual.fila <= f2  :
+                        actual.dato = "-"
+                    
+                    actual = actual.abajo
+            eColum = eColum.siguiente
+
+    def agregar_triangulo(self,x,y,t):
+        finalx = x + t
+        finaly = y + t 
+        eColum = self.eColumnas.primero
+        while eColum != None:
+            actual = eColum.acceso
+            if actual.columna >= y and actual.columna < finaly:
+                while actual != None:
+                    if actual.fila >= x and actual.fila < finalx  :
+                        actual.dato = "-"
+                    
+                    actual = actual.abajo
+            x = x + 1
+            eColum = eColum.siguiente
+        
+
+
+
 # m = matriz()
 
-# m.insertar(1,1,"-")
-# m.insertar(1,2,"-")
+# m.insertar(1,1,"*")
+# m.insertar(1,2,"*")
 # m.insertar(1,3,"*")
+# m.insertar(1,4,"*")
 # m.insertar(2,1,"*")
-# m.insertar(2,2,"-")
+# m.insertar(2,2,"*")
 # m.insertar(2,3,"*")
-# m.insertar(3,1,"-")
+# m.insertar(2,4,"*")
+# m.insertar(3,1,"*")
 # m.insertar(3,2,"*")
-# m.insertar(3,3,"-")
+# m.insertar(3,3,"*")
+# m.insertar(3,4,"*")
+# m.insertar(4,1,"*")
+# m.insertar(4,2,"*")
+# m.insertar(4,3,"*")
+# m.insertar(4,4,"*")
 
 # m.imprimirColumna()
-# a = m.grafica_original()
+# m.agregar_triangulo(1,2,3)
+# a = m.cadena_grap()
 # print(a)
+
