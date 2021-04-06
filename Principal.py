@@ -9,6 +9,7 @@ from datetime import datetime
 from datetime import date
 import webbrowser
 from tkinter import messagebox
+import os
 
 
 class window:
@@ -21,7 +22,7 @@ class window:
         self.fecha = date.today() 
         self.main_window = main_window
         self.main_window.title("Principal")
-        self.main_window.geometry("750x550")
+        self.main_window.geometry("700x550")
         self.main_window.config(bg = "#A6FA3E")
 
         self.frameB = Frame(self.main_window, pady = 5, bg = "#014A42")
@@ -49,10 +50,10 @@ class window:
         self.b2 = Button(self.frameB, text = "OPERACIONES", width = 20, command = self.ventanaOperaciones)
         self.b2.grid(row = 0, column = 2,padx = 5)
         
-        self.b3 = Button(self.frameB, text = "REPORTES", width = 20, command = self.reporte)
+        self.b3 = Button(self.frameB, text = "REPORTE", width = 20, command = self.reporte)
         self.b3.grid(row = 0, column = 3,padx = 5)
 
-        self.b4 = Button(self.frameB, text = "AYUDA", width = 20)
+        self.b4 = Button(self.frameB, text = "AYUDA", width = 20,command = self.ayuda)
         self.b4.grid(row = 0, column = 4,padx = 5)
 
     def ventanaCargar(self):
@@ -526,6 +527,32 @@ class window:
         f.close()
 
         webbrowser.open_new_tab('index.html') 
+
+    def ayuda(self):
+        def Informacion():
+            messagebox.showinfo(message="Universidad San Carlos de Guatemala\nIntroduccion a la Programacion 2\nNombre: Carlos Jezeh Gedeoni Toscano Palacios\nCarnet: 201532643\nSeccion: B", title="Informacion del Estudiante")
+            self.ventana_Ayuda.destroy()
+
+        def docu():
+            path = "Documentacion.pdf"
+            os.system(path)
+
+        self.ventana_Ayuda = Toplevel()
+        self.ventana_Ayuda.title("Ayuda")
+        self.ventana_Ayuda.geometry("200x200")
+        self.ventana_Ayuda.config(bg = "#A6FA3E")
+        
+        frameC = Frame(self.ventana_Ayuda)
+        frameC.config(bg = "#014A42")
+        frameC.pack(pady = 20)
+
+        boton1  =  Button(frameC, text = "Informacion del estudiante",command = Informacion)
+        boton1.grid(row = 0, column = 0,pady = 20)
+        
+        boton2  =  Button(frameC, text = "Documentacion", command = docu)
+        boton2.grid(row = 1, column = 0,pady = 20)
+
+        
 
 
 ventanaP = Tk()
