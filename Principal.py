@@ -1,18 +1,24 @@
 from tkinter import *
 from tkinter import filedialog
 import xml.etree.ElementTree as ET
-from Lista import Lista_Simple, Lista_xml
+from Lista import Lista_Simple, Lista_matriz,Lista_ope,Lista_error
 from matriz import matriz
 from graphviz import Source
 from PIL import ImageTk, Image
+from datetime import datetime
+from datetime import date
+import webbrowser
+from tkinter import messagebox
 
 
 class window:
 
     def __init__(self, main_window):
         self.m = matriz()
-        self.lista_datos = Lista_xml()
-
+        self.matris = Lista_matriz()
+        self.operac = Lista_ope()
+        self.errores = Lista_error()
+        self.fecha = date.today() 
         self.main_window = main_window
         self.main_window.title("Principal")
         self.main_window.geometry("750x550")
@@ -23,6 +29,13 @@ class window:
 
         self.frame2 =  Frame(self.main_window, pady = 5, bg = "#014A42" )    
         self.frame2.grid(row  = 1, column = 0, pady =  20, padx = 10, sticky = "nsew", rowspan = 5)
+
+        self.img = ImageTk.PhotoImage(Image.open("C:/Users/jezeh/OneDrive/Escritorio/IPC2/Proyecto2_ipc2/vacia.jpg"))
+        self.lab1 =Label(self.frame2, image = self.img).grid(row = 1,column = 0, padx = 10,pady = 10, sticky = "nsew")
+
+        self.img2 = ImageTk.PhotoImage(Image.open("C:/Users/jezeh/OneDrive/Escritorio/IPC2/Proyecto2_ipc2/vacia.jpg"))
+        self.lab2 =Label(self.frame2, image = self.img2)
+        self.lab2.grid(row = 1,column = 1, padx = 10,pady = 10, sticky = "nsew")
 
         self.labO =Label(self.frame2, text = "Imagen Original")
         self.labO.grid(row = 0,column = 0, padx = 10,pady = 10, sticky = "nsew")
@@ -36,11 +49,11 @@ class window:
         self.b2 = Button(self.frameB, text = "OPERACIONES", width = 20, command = self.ventanaOperaciones)
         self.b2.grid(row = 0, column = 2,padx = 5)
         
-        self.b3 = Button(self.frameB, text = "REPORTES", width = 20)
+        self.b3 = Button(self.frameB, text = "REPORTES", width = 20, command = self.reporte)
         self.b3.grid(row = 0, column = 3,padx = 5)
-        
+
         self.b4 = Button(self.frameB, text = "AYUDA", width = 20)
-        self.b4.grid(row = 0, column = 4, padx = 5)
+        self.b4.grid(row = 0, column = 4,padx = 5)
 
     def ventanaCargar(self):
         self.ventana_C = Toplevel()
@@ -78,9 +91,7 @@ class window:
 
     def cargar1(self):
         archivo_entrada = filedialog.askopenfilename(initialdir = "C:/Users/jezeh/OneDrive/Escritorio/IPC2/Proyecto2_ipc2",title = "Selecciona un archivo",filetypes =(("xml files","*.xml"),("xml files","*.*")))
-        
-        print(archivo_entrada)
-        
+
         archivo = ET.parse(archivo_entrada)
         root = archivo.getroot()
 
@@ -88,21 +99,21 @@ class window:
             contador = 0
             for subelement in element:
                 if contador == 0:
-                    name1 = subelement.text
+                    self.name1 = subelement.text
                     contador = contador + 1
                 elif contador == 1:
-                    row1 = subelement.text
+                    self.row1 = subelement.text
                     contador = contador + 1
                 elif contador == 2:
-                    colum1 = subelement.text
+                    self.colum1 = subelement.text
                     contador = contador + 1
                 elif contador == 3:
-                    self.ima1 = subelement.text
+                    ima1 = subelement.text
                     x = 1
                     y = 0
                     contadorES = 0
                     contadorAS = 0
-                    for i in self.ima1:
+                    for i in ima1:
                         if i == " ":
                            continue
                         elif i == "\n":
@@ -116,29 +127,62 @@ class window:
                             self.m.insertar(y,x,i)
                             x = x + 1
                     contador = 0
+                    Hora = self.hora() 
+                    self.matris.insertar(self.fecha,Hora,self.name1,contadorES,contadorAS)
         a = self.m.cadena_grap()
         s = Source(a,filename="original.gv",format="png")
-        s.view()
+        s.render()
         self.img = ImageTk.PhotoImage(Image.open("C:/Users/jezeh/OneDrive/Escritorio/IPC2/Proyecto2_ipc2/original.gv.png"))
         self.lab1 =Label(self.frame2, image = self.img).grid(row = 1,column = 0, padx = 10,pady = 10, sticky = "nsew")
         self.ventana_C.destroy()
     
+    def hora(self):
+        now = datetime.now()
+        Hora = "{}".format(now.hour)+":{}".format(now.minute)+":{}".format(now.second)
+        return Hora
+
     def ventana_lineH(self):
 
         def linea_horizontal():
             f = fini.get()
             c1 = cini.get()
             c2 = ffi.get()
-            self.m.linea_horizontal(int(f),int(c1),int(c2))
-            a = self.m.cadena_grap()
-            s = Source(a,filename="edit.gv",format="png")
-            s.view()
-            self.img2 = ImageTk.PhotoImage(Image.open("C:/Users/jezeh/OneDrive/Escritorio/IPC2/Proyecto2_ipc2/edit.gv.png"))
-            self.lab2 =Label(self.frame2, image = self.img2)
-            self.lab2.grid(row = 1,column = 1, padx = 10,pady = 10, sticky = "nsew")
             
-            self.labE.config(text = "Linea Horizontal")
-            self.ventana_data2.destroy()
+            if int(f) > int(self.row1):
+                messagebox.showerror(message="La fila "+str(f)+" no existe", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La fila "+str(f)+" no existe","Agregar linea horizontal",self.name1)
+                self.ventana_data2.destroy()
+
+            elif int(c1) > int(self.colum1):
+                messagebox.showerror(message="La columna "+str(c1)+" no existe", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La columna "+str(c1)+" no existe","Agregar linea horizontal",self.name1)
+                self.ventana_data2.destroy()
+
+            elif int(c2) > int(self.colum1):
+                messagebox.showerror(message="La columna "+str(c2)+" no existe", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La columna "+str(c2)+" no existe","Agregar linea horizontal",self.name1)
+                self.ventana_data2.destroy()
+            elif int(c1) > int(c2):
+                messagebox.showerror(message="La columna inicial es mas grande que la columna final", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La columna inicial es mas grande que la columna final","Agregar linea horizontal",self.name1)
+                self.ventana_data2.destroy()
+
+            else:
+                self.m.linea_horizontal(int(f),int(c1),int(c2))
+                a = self.m.cadena_grap()
+                s = Source(a,filename="edit.gv",format="png")
+                s.render()
+                self.img2 = ImageTk.PhotoImage(Image.open("C:/Users/jezeh/OneDrive/Escritorio/IPC2/Proyecto2_ipc2/edit.gv.png"))
+                self.lab2 =Label(self.frame2, image = self.img2)
+                self.lab2.grid(row = 1,column = 1, padx = 10,pady = 10, sticky = "nsew")
+                self.labE.config(text = "Linea Horizontal")
+                Hora = self.hora()
+                self.operac.insertar(self.fecha,Hora,"Insertar Linea Horizontal",self.name1)
+                self.ventana_data2.destroy()
 
         self.ventana_data2 = Toplevel()
         self.ventana_data2.title("Datos")
@@ -178,16 +222,44 @@ class window:
             c1 = cini.get()
             f2 = ffi.get()
             c2 = cfi.get()
-            self.m.limpiar_espacio(int(f1),int(c1),int(f2),int(c2))
-            a = self.m.cadena_grap()
-            s = Source(a,filename="edit.gv",format="png")
-            s.view()
-            self.img2 = ImageTk.PhotoImage(Image.open("C:/Users/jezeh/OneDrive/Escritorio/IPC2/Proyecto2_ipc2/edit.gv.png"))
-            self.lab2 =Label(self.frame2, image = self.img2)
-            self.lab2.grid(row = 1,column = 1, padx = 10,pady = 10, sticky = "nsew")
+            if int(f1) > int(self.row1):
+                messagebox.showerror(message="La fila "+str(f1)+" no existe", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La fila "+str(f1)+" no existe","Agregar linea horizontal",self.name1)
+                self.ventana_data1.destroy()
+            elif int(f2) > int(self.row1):
+                messagebox.showerror(message="La fila "+str(f2)+" no existe", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La fila "+str(f2)+" no existe","Agregar linea horizontal",self.name1)
+                self.ventana_data1.destroy()
+            elif int(c1) > int(self.colum1):
+                messagebox.showerror(message="La columna "+str(c1)+" no existe", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La columna "+str(c1)+" no existe","Agregar linea horizontal",self.name1)
+                self.ventana_data1.destroy()
+            elif int(c2) > int(self.colum1):
+                messagebox.showerror(message="La columna "+str(c2)+" no existe", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La columna "+str(c2)+" no existe","Agregar linea horizontal",self.name1)
+                self.ventana_data1.destroy()
+            elif int(c1) > int(c2):
+                messagebox.showerror(message="La columna inicial es mas grande que la columna final", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La columna inicial es mas grande que la columna final","Agregar linea horizontal",self.name1)
+                self.ventana_data1.destroy()
+            else:
+                self.m.limpiar_espacio(int(f1),int(c1),int(f2),int(c2))
+                a = self.m.cadena_grap()
+                s = Source(a,filename="edit.gv",format="png")
+                s.render()
+                self.img2 = ImageTk.PhotoImage(Image.open("C:/Users/jezeh/OneDrive/Escritorio/IPC2/Proyecto2_ipc2/edit.gv.png"))
+                self.lab2 =Label(self.frame2, image = self.img2)
+                self.lab2.grid(row = 1,column = 1, padx = 10,pady = 10, sticky = "nsew")
             
-            self.labE.config(text = "Limpiar zona")
-            self.ventana_data1.destroy()
+                self.labE.config(text = "Limpiar zona")
+                Hora = self.hora()
+                self.operac.insertar(self.fecha,Hora,"Limpiar Zona de Imagen",self.name1)
+                self.ventana_data1.destroy()
 
         self.ventana_data1 = Toplevel()
         self.ventana_data1.title("Datos")
@@ -232,16 +304,40 @@ class window:
             c = fini.get()
             f1 = cini.get()
             f2 = ffi.get()
-            self.m.linea_vertical(int(c),int(f1),int(f2))
-            a = self.m.cadena_grap()
-            s = Source(a,filename="edit.gv",format="png")
-            s.view()
-            self.img2 = ImageTk.PhotoImage(Image.open("C:/Users/jezeh/OneDrive/Escritorio/IPC2/Proyecto2_ipc2/edit.gv.png"))
-            self.lab2 =Label(self.frame2, image = self.img2)
-            self.lab2.grid(row = 1,column = 1, padx = 10,pady = 10, sticky = "nsew")
-            
-            self.labE.config(text = "Linea Vertical")
-            self.ventana_data3.destroy()
+            if int(c) > int(self.colum1):
+                messagebox.showerror(message="La columna "+str(c)+" no existe", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La columna "+str(c)+" no existe","Agregar linea horizontal",self.name1)
+                self.ventana_data3.destroy()
+
+            elif int(f1) > int(self.row1):
+                messagebox.showerror(message="La columna "+str(f1)+" no existe", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La columna "+str(f1)+" no existe","Agregar linea horizontal",self.name1)
+                self.ventana_data3.destroy()
+
+            elif int(f2) > int(self.row1):
+                messagebox.showerror(message="La columna "+str(f2)+" no existe", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La columna "+str(f2)+" no existe","Agregar linea horizontal",self.name1)
+                self.ventana_data3.destroy()
+            elif int(f1) > int(f2):
+                messagebox.showerror(message="La Fila inicial es mas grande que la Fila final", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La columna inicial es mas grande que la columna final","Agregar linea horizontal",self.name1)
+                self.ventana_data3.destroy()
+            else:
+                self.m.linea_vertical(int(c),int(f1),int(f2))
+                a = self.m.cadena_grap()
+                s = Source(a,filename="edit.gv",format="png")
+                s.render()
+                self.img2 = ImageTk.PhotoImage(Image.open("C:/Users/jezeh/OneDrive/Escritorio/IPC2/Proyecto2_ipc2/edit.gv.png"))
+                self.lab2 =Label(self.frame2, image = self.img2)
+                self.lab2.grid(row = 1,column = 1, padx = 10,pady = 10, sticky = "nsew")
+                Hora = self.hora()
+                self.operac.insertar(self.fecha,Hora,"Insertar Linea Vertical",self.name1)
+                self.labE.config(text = "Linea Vertical")
+                self.ventana_data3.destroy()
 
         self.ventana_data3 = Toplevel()
         self.ventana_data3.title("Datos")
@@ -281,16 +377,29 @@ class window:
             c1 = cini.get()
             f2 = ffi.get()
             c2 = cfi.get()
-            self.m.agregar_rectangulo(int(f1),int(c1),int(f2),int(c2))
-            a = self.m.cadena_grap()
-            s = Source(a,filename="edit.gv",format="png")
-            s.view()
-            self.img2 = ImageTk.PhotoImage(Image.open("C:/Users/jezeh/OneDrive/Escritorio/IPC2/Proyecto2_ipc2/edit.gv.png"))
-            self.lab2 =Label(self.frame2, image = self.img2)
-            self.lab2.grid(row = 1,column = 1, padx = 10,pady = 10, sticky = "nsew")
-            
-            self.labE.config(text = "Agregando rectangulo")
-            self.ventana_data4.destroy()
+            if int(f1) > int(self.row1):
+                messagebox.showerror(message="La fila "+str(f1)+" no existe", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La fila "+str(f1)+" no existe","Insertar Rectangulo",self.name1)
+                self.ventana_data4.destroy()
+
+            elif int(c1) > int(self.colum1):
+                messagebox.showerror(message="La columna "+str(c1)+" no existe", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La columna "+str(c1)+" no existe","Insertar Rectangulo",self.name1)
+                self.ventana_data4.destroy()
+            else:
+                self.m.agregar_rectangulo(int(f1),int(c1),int(f2),int(c2))
+                a = self.m.cadena_grap()
+                s = Source(a,filename="edit.gv",format="png")
+                s.render()
+                self.img2 = ImageTk.PhotoImage(Image.open("C:/Users/jezeh/OneDrive/Escritorio/IPC2/Proyecto2_ipc2/edit.gv.png"))
+                self.lab2 =Label(self.frame2, image = self.img2)
+                self.lab2.grid(row = 1,column = 1, padx = 10,pady = 10, sticky = "nsew")
+                Hora = self.hora()
+                self.operac.insertar(self.fecha,Hora,"Insertar Rectangulo",self.name1)
+                self.labE.config(text = "Agregando rectangulo")
+                self.ventana_data4.destroy()
 
         self.ventana_data4 = Toplevel()
         self.ventana_data4.title("Datos")
@@ -335,16 +444,29 @@ class window:
             x = fini.get()
             y = cini.get()
             t = ffi.get()
-            self.m.agregar_triangulo(int(x),int(y),int(t))
-            a = self.m.cadena_grap()
-            s = Source(a,filename="edit.gv",format="png")
-            s.view()
-            self.img2 = ImageTk.PhotoImage(Image.open("C:/Users/jezeh/OneDrive/Escritorio/IPC2/Proyecto2_ipc2/edit.gv.png"))
-            self.lab2 =Label(self.frame2, image = self.img2)
-            self.lab2.grid(row = 1,column = 1, padx = 10,pady = 10, sticky = "nsew")
-            
-            self.labE.config(text = "Agregando Triangulo")
-            self.ventana_data5.destroy()
+            if int(x) > int(self.row1):
+                messagebox.showerror(message="La fila "+str(x)+" no existe", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La fila "+str(x)+" no existe","Insertar Triangulo",self.name1)
+                self.ventana_data5.destroy()
+
+            elif int(y) > int(self.colum1):
+                messagebox.showerror(message="La columna "+str(y)+" no existe", title="Error")
+                H = self.hora()
+                self.errores.insertar(self.fecha,H,"La columna "+str(y)+" no existe","Insertar Triangulo",self.name1)
+                self.ventana_data5.destroy()
+            else:
+                self.m.agregar_triangulo(int(x),int(y),int(t))
+                a = self.m.cadena_grap()
+                s = Source(a,filename="edit.gv",format="png")
+                s.render()
+                self.img2 = ImageTk.PhotoImage(Image.open("C:/Users/jezeh/OneDrive/Escritorio/IPC2/Proyecto2_ipc2/edit.gv.png"))
+                self.lab2 =Label(self.frame2, image = self.img2)
+                self.lab2.grid(row = 1,column = 1, padx = 10,pady = 10, sticky = "nsew")
+                Hora = self.hora()
+                self.operac.insertar(self.fecha,Hora,"Insertar Triangulo",self.name1)
+                self.labE.config(text = "Agregando Triangulo")
+                self.ventana_data5.destroy()
 
         self.ventana_data5 = Toplevel()
         self.ventana_data5.title("Datos")
@@ -376,6 +498,36 @@ class window:
         bt1.grid(row = 3, column = 0, columnspan = 2, sticky = "we")
 
         self.ventana_ope.destroy()
+
+    def reporte(self):
+        cadena = """<!DOCTYPE html>
+        <html lang="es">
+        <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Data</title>
+        <link rel="stylesheet" href="style.css">
+        </head>
+        <body>
+        <div>"""
+        cadena1 = self.matris.cadena_html()
+        cadena2 = self.operac.cadena_html()
+        cadena3 = self.errores.cadena_html()
+       
+        cadena = cadena + cadena1 + cadena2 + cadena3
+        cadena = cadena +"""</div>   
+        </body>
+        </html>"""
+
+        f = open('index.html','w')
+
+        f.write(cadena)
+        f.close()
+
+        webbrowser.open_new_tab('index.html') 
+
+
 ventanaP = Tk()
 app = window(ventanaP)
 ventanaP.mainloop()

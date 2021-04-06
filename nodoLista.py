@@ -16,12 +16,31 @@ class Nodo_simple:
     def setObjeto(self,siguiente):
         self.siguiente = siguiente
 
-class Nodo_xml:
+class Nodo_matriz:
     
-    def __init__(self, nombre, filas, columnas, imagen):
+    def __init__(self, fecha, hora, nombre, espacios, asteriscos):
+        self.fecha = fecha
+        self.hora = hora
         self.nombre = nombre
-        self.filas = filas
-        self.columnas = columnas
-        self.imagen = imagen
+        self.espacios = espacios
+        self.asteriscos = asteriscos
         self.siguiente = None
 
+class Nodo_Operaciones:
+    
+    def __init__(self, fecha,hora, operacion, nombre):
+        self.fecha = fecha
+        self.hora = hora
+        self.nombre = nombre
+        self.operacion = operacion
+        self.siguiente = None
+
+class Nodo_Errores:
+    
+    def __init__(self, fecha,hora, error, operacion, nombre):
+        self.fecha = fecha
+        self.hora = hora
+        self.error = error
+        self.nombre = nombre
+        self.operacion = operacion
+        self.siguiente = None
